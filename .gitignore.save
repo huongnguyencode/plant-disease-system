@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+.venv/
+
+# Kaggle / training output
+runs/
+*.log
+
+# Upload/crop images
+static/uploads/*
+static/crops/*
+
+# Keep folder
+!static/uploads/.gitkeep
+!static/crops/.gitkeep
+
+# Model files - large files
+models/*.pth
+models/*.pt
+models/*.onnx
+
+# OS
+.DS_Store
+Thumbs.db

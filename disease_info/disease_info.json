@@ -1,0 +1,50 @@
+{
+  "Tomato___Late_blight": {
+    "plant_name": "Cà chua",
+    "disease_name": "Bệnh mốc sương",
+    "description": "Bệnh mốc sương trên cà chua thường gây vết thâm nâu trên lá, thân và quả. Khi độ ẩm cao, mặt dưới lá có thể xuất hiện lớp mốc trắng.",
+    "cause": "Do nấm Phytophthora infestans phát triển mạnh trong điều kiện ẩm ướt, mưa nhiều và nhiệt độ mát.",
+    "solutions": "Loại bỏ lá và quả bị bệnh, tránh tưới lên tán lá, phun thuốc phòng trừ nấm phù hợp theo hướng dẫn kỹ thuật địa phương.",
+    "prevention": "Trồng cây nơi thoáng khí, luân canh cây trồng, dùng giống kháng bệnh nếu có và kiểm tra vườn thường xuyên sau mưa."
+  },
+  "Tomato___Early_blight": {
+    "plant_name": "Cà chua",
+    "disease_name": "Bệnh đốm vòng",
+    "description": "Bệnh tạo các đốm nâu có vòng đồng tâm trên lá già, sau đó lan dần làm lá vàng và rụng sớm.",
+    "cause": "Do nấm Alternaria solani tồn tại trong tàn dư cây bệnh và lây lan qua nước bắn, gió hoặc dụng cụ canh tác.",
+    "solutions": "Cắt bỏ lá bệnh, thu gom tàn dư cây trồng, cải thiện thông thoáng và sử dụng thuốc nấm phù hợp khi bệnh xuất hiện nặng.",
+    "prevention": "Luân canh, phủ gốc để hạn chế đất bắn lên lá, tưới vào gốc và không để cây thiếu dinh dưỡng."
+  },
+  "Tomato___healthy": {
+    "plant_name": "Cà chua",
+    "disease_name": "Khỏe mạnh",
+    "description": "Lá cà chua không có dấu hiệu bệnh rõ rệt trong ảnh được phân tích.",
+    "cause": "Không phát hiện tác nhân gây bệnh nổi bật.",
+    "solutions": "Tiếp tục chăm sóc bình thường, theo dõi màu lá, độ ẩm và tình trạng sâu bệnh.",
+    "prevention": "Duy trì vườn thông thoáng, bón phân cân đối, tưới nước hợp lý và kiểm tra cây định kỳ."
+  },
+  "Potato___Late_blight": {
+    "plant_name": "Khoai tây",
+    "disease_name": "Bệnh mốc sương",
+    "description": "Bệnh gây vết thâm nước trên lá khoai tây, lan nhanh thành mảng nâu đen và có thể làm cây héo rũ.",
+    "cause": "Do Phytophthora infestans phát triển trong thời tiết ẩm, mát và có sương hoặc mưa kéo dài.",
+    "solutions": "Loại bỏ phần cây bị bệnh, giảm độ ẩm trên tán lá và dùng thuốc phòng trừ nấm theo khuyến cáo.",
+    "prevention": "Dùng giống sạch bệnh, vun luống thoát nước tốt, luân canh và tránh trồng quá dày."
+  },
+  "Potato___Early_blight": {
+    "plant_name": "Khoai tây",
+    "disease_name": "Bệnh đốm vòng",
+    "description": "Lá xuất hiện đốm nâu có vòng đồng tâm, thường bắt đầu từ lá già rồi lan rộng khi cây suy yếu.",
+    "cause": "Do nấm Alternaria solani, thường nặng hơn khi cây bị stress, thiếu dinh dưỡng hoặc gặp điều kiện nóng ẩm.",
+    "solutions": "Cắt bỏ lá bệnh, bổ sung dinh dưỡng cân đối, giữ ruộng sạch và dùng thuốc nấm phù hợp nếu cần.",
+    "prevention": "Luân canh với cây không cùng họ, dùng củ giống khỏe, giữ ruộng thông thoáng và tưới nước hợp lý."
+  },
+  "Potato___healthy": {
+    "plant_name": "Khoai tây",
+    "disease_name": "Khỏe mạnh",
+    "description": "Lá khoai tây không có triệu chứng bệnh rõ ràng trong ảnh được phân tích.",
+    "cause": "Không phát hiện tác nhân gây bệnh nổi bật.",
+    "solutions": "Tiếp tục chăm sóc và theo dõi cây trong các giai đoạn sinh trưởng.",
+    "prevention": "Duy trì thoát nước tốt, bón phân cân đối, kiểm tra sâu bệnh và loại bỏ tàn dư cây bệnh."
+  }
+}

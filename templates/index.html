@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nhận diện bệnh lá cây</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <section class="upload-panel">
+      <div class="intro">
+        <p class="eyebrow">Plant Disease Detection</p>
+        <h1>Nhận diện bệnh trên lá cây</h1>
+        <p class="lead">Tải ảnh lá cây lên để hệ thống phát hiện vùng lá, phân loại bệnh và hiển thị gợi ý xử lý bằng tiếng Việt.</p>
+      </div>
+
+      {% if error %}
+        <div class="alert">{{ error }}</div>
+      {% endif %}
+
+      <form class="upload-form" method="post" enctype="multipart/form-data">
+        <label class="file-picker" for="image">
+          <span>Chọn ảnh lá cây</span>
+          <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp" required>
+        </label>
+        <button type="submit">Phân tích ảnh</button>
+      </form>
+
+      {% if original_image %}
+        <div class="preview-note">
+          <p>Ảnh đã tải lên nhưng chưa thể phân tích do thiếu model phân loại.</p>
+          <img src="{{ url_for('static', filename=original_image) }}" alt="Ảnh đã tải lên">
+        </div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

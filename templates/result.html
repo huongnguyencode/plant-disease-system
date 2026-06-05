@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kết quả nhận diện</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page result-page">
+    <section class="result-header">
+      <div>
+        <p class="eyebrow">Kết quả phân tích</p>
+        <h1>{{ result.disease_name }}</h1>
+        <p class="lead">{{ result.plant_name }} · {{ result.predicted_class }} · {{ result.confidence }}%</p>
+      </div>
+      <a class="back-link" href="{{ url_for('index') }}">Phân tích ảnh khác</a>
+    </section>
+
+    {% if result.yolo_fallback %}
+      <div class="alert">
+        Không tìm thấy model YOLO hoặc không phát hiện được lá. Hệ thống đã dùng ảnh gốc làm ảnh crop.
+      </div>
+    {% endif %}
+
+    <section class="image-grid">
+      <article class="image-card">
+        <h2>Ảnh gốc</h2>
+        <img src="{{ url_for('static', filename=result.original_image) }}" alt="Ảnh gốc">
+      </article>
+      <article class="image-card">
+        <h2>Ảnh lá đã cắt</h2>
+        <img src="{{ url_for('static', filename=result.crop_image) }}" alt="Ảnh lá đã cắt">
+      </article>
+    </section>
+
+    <section class="details">
+      <div class="summary-card">
+        <span>Cây trồng</span>
+        <strong>{{ result.plant_name }}</strong>
+      </div>
+      <div class="summary-card">
+        <span>Bệnh</span>
+        <strong>{{ result.disease_name }}</strong>
+      </div>
+      <div class="summary-card">
+        <span>Độ tin cậy</span>
+        <strong>{{ result.confidence }}%</strong>
+      </div>
+    </section>
+
+    <section class="info-list">
+      <article>
+        <h2>Mô tả</h2>
+        <p>{{ result.description }}</p>
+      </article>
+      <article>
+        <h2>Nguyên nhân</h2>
+        <p>{{ result.cause }}</p>
+      </article>
+      <article>
+        <h2>Giải pháp</h2>
+        <p>{{ result.solutions }}</p>
+      </article>
+      <article>
+        <h2>Phòng ngừa</h2>
+        <p>{{ result.prevention }}</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
