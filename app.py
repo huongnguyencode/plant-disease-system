@@ -11,6 +11,8 @@ from utils.pipeline import run_pipeline
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "static" / "uploads"
 CROP_DIR = BASE_DIR / "static" / "crops"
+ENHANCED_DIR = BASE_DIR / "static" / "enhanced"
+MODEL_DIR = BASE_DIR / "models"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
 
@@ -19,8 +21,16 @@ app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 app.config["UPLOAD_FOLDER"] = UPLOAD_DIR
 
 
+def ensure_project_dirs():
+    for directory in (UPLOAD_DIR, CROP_DIR, ENHANCED_DIR, MODEL_DIR):
+        directory.mkdir(parents=True, exist_ok=True)
+
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+ensure_project_dirs()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -38,8 +48,7 @@ def index():
             error="Định dạng ảnh không hợp lệ. Vui lòng dùng PNG, JPG, JPEG hoặc WEBP.",
         )
 
-    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    CROP_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_project_dirs()
 
     original_name = secure_filename(image_file.filename)
     suffix = Path(original_name).suffix.lower()
@@ -47,13 +56,9 @@ def index():
     image_path = UPLOAD_DIR / saved_name
     image_file.save(image_path)
 
-    result = run_pipeline(image_path=image_path, crop_dir=CROP_DIR)
+    result = run_pipeline(image_path=image_path, crop_dir=CROP_DIR, enhanced_dir=ENHANCED_DIR)
     if result.get("error"):
-        return render_template(
-            "index.html",
-            error=result["error"],
-            original_image=f"uploads/{saved_name}",
-        )
+        return render_template("result.html", result=result)
 
     return render_template("result.html", result=result)
 

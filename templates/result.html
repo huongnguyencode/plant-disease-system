@@ -11,62 +11,169 @@
     <section class="result-header">
       <div>
         <p class="eyebrow">Kết quả phân tích</p>
-        <h1>{{ result.disease_name }}</h1>
-        <p class="lead">{{ result.plant_name }} · {{ result.predicted_class }} · {{ result.confidence }}%</p>
+        {% if result.success %}
+          <h1>{{ result.disease_name }}</h1>
+          <p class="lead">{{ result.plant_name }} · {{ result.predicted_class }} · {{ result.confidence }}%</p>
+        {% else %}
+          <h1>Không thể phân tích ảnh</h1>
+          <p class="lead">{{ result.message or result.error }}</p>
+        {% endif %}
       </div>
       <a class="back-link" href="{{ url_for('index') }}">Phân tích ảnh khác</a>
     </section>
 
-    {% if result.yolo_fallback %}
-      <div class="alert">
-        Không tìm thấy model YOLO hoặc không phát hiện được lá. Hệ thống đã dùng ảnh gốc làm ảnh crop.
+    {% if result.success %}
+      <div class="alert alert-info">
+        Ảnh được tăng cường nhẹ để phát hiện vùng lá và được chuẩn hóa bảo toàn màu trước khi phân loại.
+        {% if result.quality_message %}
+          {{ result.quality_message }}
+        {% endif %}
+      </div>
+      {% if result.low_confidence %}
+        <div class="alert">
+          Độ tin cậy thấp. Ảnh có thể khác phân phối dữ liệu train hoặc chất lượng ảnh chưa tốt.
+        </div>
+      {% else %}
+        <div class="alert alert-info">
+          Kết quả có độ tin cậy cao nhưng vẫn có thể sai và nên được đối chiếu với triệu chứng thực tế.
+        </div>
+      {% endif %}
+    {% endif %}
+
+    {% if result.yolo_message %}
+      <div class="alert {% if not result.yolo_fallback %}alert-info{% endif %}">
+        {{ result.yolo_message }}
       </div>
     {% endif %}
 
-    <section class="image-grid">
-      <article class="image-card">
-        <h2>Ảnh gốc</h2>
-        <img src="{{ url_for('static', filename=result.original_image) }}" alt="Ảnh gốc">
-      </article>
-      <article class="image-card">
-        <h2>Ảnh lá đã cắt</h2>
-        <img src="{{ url_for('static', filename=result.crop_image) }}" alt="Ảnh lá đã cắt">
-      </article>
-    </section>
+    {% if result.original_image or result.enhanced_image or result.crop_image or result.classifier_image %}
+      <section class="image-grid">
+        {% if result.original_image %}
+          <article class="image-card">
+            <h2>Ảnh gốc</h2>
+            <img src="{{ url_for('static', filename=result.original_image) }}" alt="Ảnh gốc">
+          </article>
+        {% endif %}
+      {% if result.enhanced_image %}
+        <article class="image-card">
+          <h2>Ảnh tăng cường cho phát hiện lá</h2>
+          <img src="{{ url_for('static', filename=result.enhanced_image) }}" alt="Ảnh tăng cường cho phát hiện lá">
+        </article>
+      {% endif %}
+      {% if result.crop_image %}
+        <article class="image-card">
+          <h2>Ảnh lá đã cắt</h2>
+          <img src="{{ url_for('static', filename=result.crop_image) }}" alt="Ảnh lá đã cắt">
+        </article>
+      {% endif %}
+      {% if result.classifier_image %}
+        <article class="image-card">
+          <h2>Ảnh đưa vào bộ phân loại</h2>
+          <img src="{{ url_for('static', filename=result.classifier_image) }}" alt="Ảnh chuẩn bị cho bộ phân loại">
+        </article>
+      {% endif %}
+      </section>
+    {% endif %}
 
-    <section class="details">
-      <div class="summary-card">
-        <span>Cây trồng</span>
-        <strong>{{ result.plant_name }}</strong>
-      </div>
-      <div class="summary-card">
-        <span>Bệnh</span>
-        <strong>{{ result.disease_name }}</strong>
-      </div>
-      <div class="summary-card">
-        <span>Độ tin cậy</span>
-        <strong>{{ result.confidence }}%</strong>
-      </div>
-    </section>
+    {% if result.quality_metrics %}
+      <section class="details metrics-grid">
+        <div class="summary-card">
+          <span>Tỷ lệ điểm ảnh sáng</span>
+          <strong>{{ "%.2f"|format(result.quality_metrics.bright_ratio * 100) }}%</strong>
+        </div>
+        <div class="summary-card">
+          <span>Tỷ lệ điểm ảnh tối</span>
+          <strong>{{ "%.2f"|format(result.quality_metrics.dark_ratio * 100) }}%</strong>
+        </div>
+        <div class="summary-card">
+          <span>Độ nét</span>
+          <strong>{{ result.quality_metrics.blur_score }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Độ tương phản</span>
+          <strong>{{ result.quality_metrics.contrast_score }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Độ sáng trung bình</span>
+          <strong>{{ result.quality_metrics.mean_brightness }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Tỷ lệ vùng lá/tiền cảnh</span>
+          <strong>{{ "%.2f"|format(result.quality_metrics.foreground_ratio * 100) }}%</strong>
+        </div>
+      </section>
+    {% endif %}
 
-    <section class="info-list">
-      <article>
-        <h2>Mô tả</h2>
-        <p>{{ result.description }}</p>
-      </article>
-      <article>
-        <h2>Nguyên nhân</h2>
-        <p>{{ result.cause }}</p>
-      </article>
-      <article>
-        <h2>Giải pháp</h2>
-        <p>{{ result.solutions }}</p>
-      </article>
-      <article>
-        <h2>Phòng ngừa</h2>
-        <p>{{ result.prevention }}</p>
-      </article>
-    </section>
+    {% if result.success %}
+      <section class="info-list">
+        <article>
+          <h2>Thông tin tiền xử lý ảnh</h2>
+          <ul class="tips-list">
+            {% if result.quality_issues %}
+              {% for issue in result.quality_issues %}
+                <li>
+                  {% if issue == "overexposed" %}
+                    Vùng lá bị sáng/chói, hệ thống chỉ giảm nhẹ vùng sáng để hỗ trợ phát hiện.
+                  {% elif issue == "underexposed" %}
+                    Vùng lá bị tối, hệ thống đã tăng sáng nhẹ.
+                  {% elif issue == "blurry" %}
+                    Ảnh bị mờ; hệ thống không làm nét mạnh để tránh biến dạng đốm bệnh.
+                  {% elif issue == "low_contrast" %}
+                    Vùng lá có độ tương phản thấp, hệ thống đã cân bằng sáng cục bộ ở mức nhẹ.
+                  {% elif issue == "small_leaf" %}
+                    Lá chiếm ít diện tích ảnh, kết quả có thể kém ổn định.
+                  {% else %}
+                    {{ issue }}
+                  {% endif %}
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>Không phát hiện vấn đề chất lượng rõ rệt, ảnh vẫn được chuẩn hóa trước khi phân tích.</li>
+            {% endif %}
+          </ul>
+        </article>
+      </section>
+    {% endif %}
+
+    {% if result.success %}
+      <section class="details">
+        <div class="summary-card">
+          <span>Lớp dự đoán</span>
+          <strong>{{ result.predicted_class }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Cây trồng</span>
+          <strong>{{ result.plant_name }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Bệnh</span>
+          <strong>{{ result.disease_name }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Độ tin cậy</span>
+          <strong>{{ result.confidence }}%</strong>
+        </div>
+      </section>
+
+      <section class="info-list">
+        <article>
+          <h2>Mô tả</h2>
+          <p>{{ result.description }}</p>
+        </article>
+        <article>
+          <h2>Nguyên nhân</h2>
+          <p>{{ result.cause }}</p>
+        </article>
+        <article>
+          <h2>Giải pháp</h2>
+          <p>{{ result.solutions }}</p>
+        </article>
+        <article>
+          <h2>Phòng ngừa</h2>
+          <p>{{ result.prevention }}</p>
+        </article>
+      </section>
+    {% endif %}
   </main>
 </body>
 </html>

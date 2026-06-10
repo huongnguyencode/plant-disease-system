@@ -8,8 +8,10 @@ runs/
 
 static/uploads/*
 static/crops/*
+static/enhanced/*
 !static/uploads/.gitkeep
 !static/crops/.gitkeep
+!static/enhanced/.gitkeep
 
 models/*.pth
 models/*.pt

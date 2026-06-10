@@ -7,6 +7,9 @@ from torchvision import models, transforms
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
+REAL_WORLD_CLASSIFIER_MODEL = (
+    BASE_DIR / "models" / "best_effnetv2s_real_finetuned.pth"
+)
 DEFAULT_CLASSIFIER_MODEL = BASE_DIR / "models" / "best_effnetv2s.pth"
 DEFAULT_CLASS_NAMES = BASE_DIR / "models" / "class_names.json"
 
@@ -14,7 +17,10 @@ DEFAULT_CLASS_NAMES = BASE_DIR / "models" / "class_names.json"
 def load_class_names(class_names_path=DEFAULT_CLASS_NAMES):
     class_names_path = Path(class_names_path)
     if not class_names_path.exists():
-        raise FileNotFoundError(f"Không tìm thấy file class names: {class_names_path}")
+        raise FileNotFoundError(
+            "Không tìm thấy file tên lớp tại models/class_names.json. "
+            "Vui lòng đặt file class_names.json vào đúng thư mục."
+        )
 
     with class_names_path.open("r", encoding="utf-8") as file:
         data = json.load(file)
@@ -35,14 +41,24 @@ def build_model(num_classes):
     return model
 
 
-def load_classifier(model_path=DEFAULT_CLASSIFIER_MODEL, class_names_path=DEFAULT_CLASS_NAMES):
-    model_path = Path(model_path)
+def resolve_classifier_model(model_path=None):
+    if model_path is not None:
+        return Path(model_path)
+    if REAL_WORLD_CLASSIFIER_MODEL.exists():
+        return REAL_WORLD_CLASSIFIER_MODEL
+    return DEFAULT_CLASSIFIER_MODEL
+
+
+def load_classifier(model_path=None, class_names_path=DEFAULT_CLASS_NAMES):
+    model_path = resolve_classifier_model(model_path)
     if not model_path.exists():
         raise FileNotFoundError(
-            "Không tìm thấy model phân loại tại models/best_effnetv2s.pth. "
-            "Vui lòng đặt file model vào đúng thư mục."
+            "Không tìm thấy model phân loại tại "
+            "models/best_effnetv2s_real_finetuned.pth hoặc "
+            "models/best_effnetv2s.pth."
         )
 
+    print(f"Đang tải model phân loại: {model_path}")
     class_names = load_class_names(class_names_path)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = build_model(num_classes=len(class_names))
@@ -69,7 +85,7 @@ def load_classifier(model_path=DEFAULT_CLASSIFIER_MODEL, class_names_path=DEFAUL
     return model, class_names, device
 
 
-def predict_image(image_path, model_path=DEFAULT_CLASSIFIER_MODEL, class_names_path=DEFAULT_CLASS_NAMES):
+def predict_image(image_path, model_path=None, class_names_path=DEFAULT_CLASS_NAMES):
     model, class_names, device = load_classifier(model_path, class_names_path)
 
     preprocess = transforms.Compose(
@@ -90,6 +106,7 @@ def predict_image(image_path, model_path=DEFAULT_CLASSIFIER_MODEL, class_names_p
 
     class_index = int(class_index.item())
     return {
+        "class_name": class_names[class_index],
         "predicted_class": class_names[class_index],
         "confidence": float(confidence.item()),
     }
